@@ -1,0 +1,27 @@
+{
+    "version": "2.0.0",
+    "tasks": 
+    [
+        {
+            "label": "build",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "build",
+                "${workspaceFolder}/Malachite.Parser.WebApi/Malachite.Parser.WebApi.csproj"
+            ],
+            "problemMatcher": "$msCompile",
+            "dependsOn":["clean"]
+        },
+        {
+            "label": "clean",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "clean",
+                "${workspaceFolder}/Malachite.Parser.WebApi/Malachite.Parser.WebApi.csproj"
+            ],
+            "problemMatcher": "$msCompile"
+        }
+    ]
+}
