@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Host
+URL='http://localhost:5050'
+
 # Build Proj
 PROJECT='Malachite.Parser.WebApi'
 
@@ -22,22 +25,28 @@ SERVICE='malachite-parser'
 CURRENT=$PWD # "$(dirname "$0")"
 
 # Path to service directory 
-SERVICEDIR="$CURRENT/Malachite.Service"
-
-# Path to service executables
-SERVICEBINDIR="$SERVICEDIR/bin"
+SERVICEDIR="/var/www/$SERVICE"
 
 # Project directory
 PROJDIR="$CURRENT/$PROJECT"
 
-# Service config
-SERVICE_CONFIG=$SERVICE.service
-
 # Service config path
-SERVICE_CONFIG_PATH=$SERVICEDIR/$SERVICE_CONFIG
+SERVICECONFIGPATH=/usr/lib/systemd/user/$SERVICE.service
 
-# Path to service
-SERVICE_PATH=$SERVICEBINDIR/$PROJECT.dll
+# Path to service library
+SERVICEDLLPATH=$SERVICEDIR/$PROJECT.dll
+
+# User
+SERVICEUSER='malachite'
+
+# Group
+SERVICEGROUP='malachite'
+
+if [ "$(whoami)" != 'root' ]; 
+then
+    echo "You have no permission to run $0 as non-root user."
+    exit 1;
+fi
 
 if ! [ -x "$(command -v dotnet)" ]; 
 then
@@ -51,76 +60,92 @@ then
     exit 1
 fi
 
+if systemctl is-active --quiet $SERVICE ;
+then
+    echo "Detect $SERVICE is running. Stopping service..." >&2
+
+    # Stop $SERVICE 
+    systemctl stop $SERVICE 
+
+    if [ $? -eq 1 ]; 
+    then
+        echo "Service $SERVICE stopped failed" >&2
+        exit 1
+    else
+        echo "Service $SERVICE stopped" >&2  
+    fi
+fi
+
+# Create user group if not exist
+getent group $SERVICEGROUP || groupadd $SERVICEGROUP
+
+# Create user if not exist
+if ! [[ -n $(id -u $SERVICEUSER 2>/dev/null) ]];
+then
+    echo "User $SERVICEUSER does not exist" >&2
+    echo "Create user $SERVICEUSER:$SERVICEGROUP" >&2
+
+    # Create user
+    useradd -g $SERVICEGROUP $SERVICEUSER 
+
+    # Add user to group $SERVICEGROUP
+    # usermod -a -G $SERVICEGROUP $SERVICEUSER
+fi
+
 # Remove service directory if exist
 rm -rf $SERVICEDIR
 
 # Build and publish binaries
 dotnet publish "$PROJDIR/$PROJECT.csproj" \
     -c $CONFIGURATION \
-    -o $SERVICEBINDIR \
+    -o $SERVICEDIR \
     --version-suffix $VERSION \
     --no-self-contained \
     --nologo
 
-if [ "$(systemctl is-active --quiet $SERVICE)" ];
-then
-    echo "Detect $SERVICE is running. Stopping service..." >&2
-    
-    # Show status service
-    systemctl stop $SERVICE     
+# Change owner to $SERVICEUSER
+chown -R $SERVICEUSER:$SERVICEGROUP $SERVICEDIR/*
 
-    if [ $? -eq 1 ]; then
-        # systemctl kill -s SIGKILL $SERVICE  
-        exit 1
-    fi
-fi
-
-if [ "$(systemctl | grep $SERVICE)" ];
-then
-    echo "Detect $SERVICE exist." >&2
-
-    # disable service
-    systemctl disable $SERVICE
-
-    # remove $SERVICE config
-fi
+# $SERVICEUSER home directory
+SERVICEUSERHOME=$(eval echo ~$SERVICEUSER)
 
 # Path to dotnet
 DOTNETPATH=$(which dotnet)
 
 # Create service config
-touch $SERVICE_CONFIG_PATH
+touch $SERVICECONFIGPATH
 
 # Set permissions (-rw-rw-r--)
-chmod 664 $SERVICE_CONFIG_PATH
+chmod 664 $SERVICECONFIGPATH
 
 # Write file content
-cat > $SERVICE_CONFIG_PATH <<EOF
+cat > $SERVICECONFIGPATH <<EOF
 [Unit]
 Description=Malachite link parser service
 
 [Service]
+Type=simple
+User=$SERVICEUSE
+Group=$SERVICEGROUP
 WorkingDirectory=$SERVICEDIR
-ExecStart=$DOTNETPATH $SERVICE_PATH
-Restart=always
-RestartSec=10
-KillSignal=SIGINT
+ExecStart=$DOTNETPATH $SERVICEDLLPATH --urls $URL
+StandardOutput=journal
+KillMode=process
 SyslogIdentifier=$SERVICE
-User=$USER
 Environment=ASPNETCORE_ENVIRONMENT=$ASPNETCORE_ENVIRONMENT
-Environment= 
+Environment=DOTNET_PRINT_TELEMETRY_MESSAGE=true
+Environment=DOTNET_CLI_HOME=$SERVICEUSERHOME
 
 [Install]
 WantedBy=multi-user.target
 EOF
 
-# Create symlink
-ln -sf $SERVICE_CONFIG_PATH /etc/systemd/system/$SERVICE_CONFIG
+# Enbled
+systemctl enable $SERVICECONFIGPATH
 
 # Reload
 systemctl daemon-reload
 
 # Start service
-systemctl start $SERVICE
-
-exit 0
+systemctl start  $SERVICE
+systemctl status $SERVICE
