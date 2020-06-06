@@ -1,0 +1,16 @@
+[Unit]
+Description=Malachite link parser service
+
+[Service]
+WorkingDirectory=/home/temaweb/Projects/Malachite.Parser/Malachite.Service
+ExecStart=/bin/dotnet /home/temaweb/Projects/Malachite.Parser/Malachite.Service/bin/Malachite.Parser.WebApi.dll
+Restart=always
+RestartSec=10
+KillSignal=SIGINT
+SyslogIdentifier=malachite-parser
+User=root
+Environment=ASPNETCORE_ENVIRONMENT=Production
+Environment= 
+
+[Install]
+WantedBy=multi-user.target
