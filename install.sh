@@ -11,67 +11,75 @@ DEFAULT_SERVICE='malachite-parser'
 DEFAULT_VERSION='1.0'
 DEFAULT_ENVIRONMENT=${ENVIRONMENTS[1]}
 
+
 #
 # Конфигурируемые параметры из аргументов командной строки
 #
 
-URL=$DEFAULT_URL
-VERSION=$DEFAULT_VERSION
-SERVICE=$DEFAULT_SERVICE
+# URL сервиса включая протокол, хост и порт.
+URL=$DEFAULT_URL               
+
+# Версия сервиса для параметра --version-suffix
+# Применяется при публикации приложения (dotnet publish)
+VERSION=$DEFAULT_VERSION                  
+
+# Имя сервиса для systemd
+SERVICE=$DEFAULT_SERVICE                  
+
+# Окружение в котором запускается приложение
+ASPNETCORE_ENVIRONMENT=$DEFAULT_ENVIRONMENT 
 
 
 #
 # .NET and Project settings
 #
 
-# ASP NET Core App version requred
-ASPNETCOREAPP="Microsoft.AspNetCore.App 3.1"
+# Проверяемая зависимость
+ASPNETCOREAPP="Microsoft.AspNetCore.App 3.1" 
 
-# Path to .NET
-DOTNETPATH=''
+# Путь к dotnet. Вычисляется в dotnet_checks
+DOTNETPATH=''                     
 
-# Build Proj
-PROJECT='Malachite.Parser.WebApi'
+# Наименование проекта сервиса
+PROJECT='Malachite.Parser.WebApi'   
 
-# Project directory
-PROJDIR="$PWD/$PROJECT"
+# Директория проекта
+PROJDIR="$PWD/$PROJECT"         
 
-# Build configuration
-CONFIGURATION='Release' # Debug | Release
+# Билд-конфигруация для сервиса (Release | Debug)
+CONFIGURATION='Release'                   
 
 
 #
 # Параметры сервиса
 #
 
-# Path to service directory 
-SERVICEDIR="/var/www/${SERVICE}"
+# Директория для исполняемых файлов сервиса
+SERVICEDIR="/var/www/${SERVICE}"          
 
-# Service config path
-SERVICECONFIGPATH="/usr/lib/systemd/user/${SERVICE}.service"
+# Путь к systemd-конфигруационному файлу
+SERVICECONFIGPATH="/usr/lib/systemd/user/${SERVICE}.service" 
 
-# Path to service library
-SERVICEDLLPATH=$SERVICEDIR/$PROJECT.dll
+# Путь к библиотеке сервиса
+SERVICEDLLPATH=$SERVICEDIR/$PROJECT.dll   
 
-# $SERVICEUSER home directory
-SERVICEUSERHOME=''
+# Домашняя директория пользователя под которым запускается сервис.
+# Она же является DOTNET_CLI_HOM. Вычисляется в create_service_user
+SERVICEUSERHOME=''                        
 
 # Пользователь под которым будет запущен сервис
-SERVICEUSER='malachite'
+# Если пользователя не существует то он будет создан
+SERVICEUSER='malachite'            
 
 # Группа под которой будет запущен сервис
-SERVICEGROUP='malachite'
+# Если группый не существует то она будет создана
+SERVICEGROUP='malachite'                  
 
+# Телеметрия
+DOTNET_PRINT_TELEMETRY_MESSAGE='True'     
 
-#
-# Окружение
-#
-
-ASPNETCORE_ENVIRONMENT=$DEFAULT_ENVIRONMENT
-DOTNET_PRINT_TELEMETRY_MESSAGE='True'
-
-# Признак режима удаления
-ISUNINSTALL=false
+# Признак деинсталляции
+ISUNINSTALL=false                         
 
 
 #
@@ -126,7 +134,7 @@ EOF
 
 print_install_options()
 {
-    cat - >&2 <<EOF2
+    cat - >&2 <<EOF
 
     Установка сервиса парсинга цен
 
@@ -139,7 +147,7 @@ print_install_options()
     VERSION           = ${VERSION}
     ENVIRONMENT       = ${ASPNETCORE_ENVIRONMENT}
 
-EOF2
+EOF
 }
 
 
@@ -155,6 +163,7 @@ fatal()
     exit 1
 }
 
+
 #
 # Штатное завершение с сообщением
 #
@@ -166,6 +175,7 @@ success()
     done
     exit 0
 }
+
 
 #
 # Разбор аргументов командной строки
