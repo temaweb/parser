@@ -7,4 +7,10 @@ public class PriceModel
         get; 
         set; 
     }
+
+    public String Discount
+    {
+        get;
+        set;
+    }
 }

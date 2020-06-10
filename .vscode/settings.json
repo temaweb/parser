@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "qtcore": "cpp",
+        "qtcoredepends": "cpp"
+    },
+    "cmake.configureOnOpen": true,
+    "cmake.sourceDirectory": "${workspaceFolder}/Malachite.Parser.Gui"
+}

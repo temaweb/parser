@@ -1,8 +1,11 @@
 using System;
 using System.ComponentModel.DataAnnotations;
+using Nager.PublicSuffix;
 
 public class PriceRequestModel
 {
+    private static WebTldRuleProvider _provider = new WebTldRuleProvider();
+
     [Url]
     [Required]
     public String Url 
@@ -11,19 +14,16 @@ public class PriceRequestModel
         set; 
     }
     
-    public String Store
+    public String Store => DomainName.Domain;
+
+    private Uri Uri => new Uri(Url);
+
+    private DomainName DomainName
     {
         get 
         {
-            return Uri.Host;
-        }
-    }
-
-    private Uri Uri 
-    {
-        get
-        {
-            return new Uri(Url);
+            var domainParser = new DomainParser(_provider);
+            return domainParser.Get(Uri);
         }
     }
 }

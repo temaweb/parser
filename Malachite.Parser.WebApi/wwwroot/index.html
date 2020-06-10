@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+        <script>
+            $(document).ready(function()
+            {
+                $("button").click(function(e)
+                {
+                    e.preventDefault();
+                    $("#links *").prop("disabled", true);
+
+                    var list = $("#result");
+                    var value = $("textarea").val();
+                    var links = value.split("\n");
+
+                    var items = [];
+
+                    $.each(links, function(key, url) {
+
+                        if (url == '')
+                            return;  
+
+                        items.push({ Url: url })  
+                    });
+
+                    $.ajax
+                    ({  
+                        type: 'POST',
+                        url: '/Price/All',
+                        
+                        dataType: 'json',
+                        contentType: 'application/json; charset=utf-8',
+                        data: JSON.stringify(items),
+
+                        success: function(data) 
+                        {
+                            list.empty();
+                            $.each(items, function(key, item) {                                
+                                list.append('<li><a href=' + item.Url + '>' + item.Url + '</a> - ' + data[key] + '</li>')
+                            });
+                        },
+
+                        failure: function(errMsg) 
+                        {
+                            alert(errMsg);
+                        }                    
+                    });
+                });
+            });
+
+            $(document).ajaxComplete(function () {
+                $("#links *").prop("disabled", false);
+            });
+        </script>
+    </head>
+    <body>
+
+        <h2>Joom</h2>
+
+        <form id="links">
+            <textarea placeholder="Links" style="width: 500px; height: 200px;"></textarea>
+            <br />
+            <button>Send</button>
+        </form>
+
+        <ul id="result" />
+
+    </body>
+</html>

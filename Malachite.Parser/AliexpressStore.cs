@@ -1,9 +1,9 @@
 using System;
 using System.Threading.Tasks;
 
-public class AliexpressStore : Store
+public class AliexpressStore : IStore
 {
-    public override Task<string> GetProductPrice(string link)
+    public Task<String> GetProductPrice(String link)
     {
         return Task.Run(() => (String) null);
     }

@@ -7,8 +7,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Malachite.Parser", "Malachi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Malachite.Parser.WebApi", "Malachite.Parser.WebApi\Malachite.Parser.WebApi.csproj", "{449B0436-8D8D-4CE4-85C0-5AB25F156FC3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Malachite.Parser.Behaviors", "Malachite.Parser.Behaviors\Malachite.Parser.Behaviors.csproj", "{AD0B1C11-BE98-45FE-91DD-20C0CD1298F0}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -46,17 +44,5 @@ Global
 		{449B0436-8D8D-4CE4-85C0-5AB25F156FC3}.Release|x64.Build.0 = Release|Any CPU
 		{449B0436-8D8D-4CE4-85C0-5AB25F156FC3}.Release|x86.ActiveCfg = Release|Any CPU
 		{449B0436-8D8D-4CE4-85C0-5AB25F156FC3}.Release|x86.Build.0 = Release|Any CPU
-		{AD0B1C11-BE98-45FE-91DD-20C0CD1298F0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{AD0B1C11-BE98-45FE-91DD-20C0CD1298F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{AD0B1C11-BE98-45FE-91DD-20C0CD1298F0}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{AD0B1C11-BE98-45FE-91DD-20C0CD1298F0}.Debug|x64.Build.0 = Debug|Any CPU
-		{AD0B1C11-BE98-45FE-91DD-20C0CD1298F0}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{AD0B1C11-BE98-45FE-91DD-20C0CD1298F0}.Debug|x86.Build.0 = Debug|Any CPU
-		{AD0B1C11-BE98-45FE-91DD-20C0CD1298F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{AD0B1C11-BE98-45FE-91DD-20C0CD1298F0}.Release|Any CPU.Build.0 = Release|Any CPU
-		{AD0B1C11-BE98-45FE-91DD-20C0CD1298F0}.Release|x64.ActiveCfg = Release|Any CPU
-		{AD0B1C11-BE98-45FE-91DD-20C0CD1298F0}.Release|x64.Build.0 = Release|Any CPU
-		{AD0B1C11-BE98-45FE-91DD-20C0CD1298F0}.Release|x86.ActiveCfg = Release|Any CPU
-		{AD0B1C11-BE98-45FE-91DD-20C0CD1298F0}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

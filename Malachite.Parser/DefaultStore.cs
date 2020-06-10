@@ -2,7 +2,7 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 
-public class DefaultStore : Store
+public class DefaultStore : IStore
 {
     private readonly ILogger<DefaultStore> _logger;
 
@@ -11,7 +11,7 @@ public class DefaultStore : Store
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
-    public override Task<String> GetProductPrice(String link)
+    public Task<String> GetProductPrice(String link)
     {
         _logger.LogWarning($"Not supported store: {link}");
         return Task.Run(() => (String) null);

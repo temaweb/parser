@@ -1,10 +1,10 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 namespace Malachite.Parser.WebApi.Controllers
 {
@@ -18,14 +18,10 @@ namespace Malachite.Parser.WebApi.Controllers
         private readonly StoreFactory _storeFactory;
         
         private readonly Stopwatch _stopwatch = new Stopwatch();
-        
-        private readonly ILogger<PriceController> _logger;
-        
 
-        public PriceController(StoreFactory storeFactory, ILogger<PriceController> logger)
+        public PriceController(StoreFactory storeFactory)
         {
-            _storeFactory = storeFactory ?? throw new ArgumentNullException(nameof(storeFactory));
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _storeFactory = storeFactory ?? throw new ArgumentNullException(nameof(storeFactory));            
         }
 
         [HttpPost]
@@ -33,34 +29,20 @@ namespace Malachite.Parser.WebApi.Controllers
         {
             if (request is null)            
                 throw new ArgumentNullException(nameof(request));
-            
-            return GetPriceInRub(request);
+
+            return GetPrice(request, store => store.GetProductPrice);
         }
 
-        [HttpPost("Rub")]
-        public async Task<String> GetPriceInRub([Required] PriceRequestModel request)
+
+        [HttpPost("All")]
+        public async IAsyncEnumerable<String> GetPrice([Required] IEnumerable<PriceRequestModel> request)
         {
             if (request is null)            
                 throw new ArgumentNullException(nameof(request));
 
-            var eventid = new EventId();
-
-            try
+            foreach (var model in request)
             {
-                _logger.LogInformation(eventid, $"Start request {request.Url}");
-                _stopwatch.Restart();
-
-                return await GetPrice(request, store => store.GetProductPrice);
-            }
-            catch (Exception exception)  
-            {
-                _logger.LogError(eventid, exception, "Error");
-                throw;
-            }
-            finally
-            {
-                _stopwatch.Stop();
-                _logger.LogInformation(eventid, $"End request {request.Url} in {_stopwatch.ElapsedMilliseconds} ms");
+                 yield return await GetPrice(model);
             }
         }
 

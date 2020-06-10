@@ -3,11 +3,11 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using HtmlAgilityPack;
 
-public partial class JoomStore : Store
+public partial class JoomStore : IStore
 {
     private readonly HttpClient _client = new HttpClient();
 
-    public override async Task<String> GetProductPrice(string link)
+    public async Task<String> GetProductPrice(string link)
     {
         var node = await LoadPricePageAsync(link);
         return node.Price;

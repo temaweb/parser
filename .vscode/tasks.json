@@ -3,6 +3,32 @@
     "tasks": 
     [
         {
+            "label": "build-cpp",
+            "command": "g++",
+            "args": [
+                "-g","-std=c++11","main.cpp", "-o", "malachite-parser", "-fPIC", 
+                    "-I/home/temaweb/Qt/5.15.0/gcc_64/include/", 
+                    "-I/home/temaweb/Qt/5.15.0/gcc_64/include/QtCore",
+                    "-L/home/temaweb/Qt/5.15.0/gcc_64/lib/", 
+                
+                    "-lQt5Core"],
+            "options": {
+                "cwd": "${workspaceRoot}/Malachite.Parser.Gui"
+            },
+            "problemMatcher": {
+                "owner": "cpp",
+                "fileLocation": ["relative", "${workspaceRoot}"],
+                "pattern": {
+                    "regexp": "^(.*):(\\d+):(\\d+):\\s+(warning|error):\\s+(.*)$",
+                    "file": 1,
+                    "line": 2,
+                    "column": 3,
+                    "severity": 4,
+                    "message": 5
+                }
+            }
+        },
+        {
             "label": "build",
             "command": "dotnet",
             "type": "process",
