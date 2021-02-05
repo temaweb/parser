@@ -14,6 +14,6 @@ public class DefaultStore : IStore
     public Task<String> GetProductPrice(String link)
     {
         _logger.LogWarning($"Not supported store: {link}");
-        return Task.Run(() => (String) null);
+        return (Task<string>) Task.CompletedTask;
     }
 }
